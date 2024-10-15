@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settlement Message</title>
+    <script>
+        function displayMessage() {
+            const params = new URLSearchParams(window.location.search);
+            const message = params.get('message');
+            document.getElementById('message').textContent = decodeURIComponent(message);
+        }
+    </script>
+</head>
+<body onload="displayMessage()">
+    <h1>Settlement Message</h1>
+    <pre id="message"></pre>
+    <button onclick="copyToClipboard()">Copy Message</button>
+
+    <script>
+        function copyToClipboard() {
+            const message = document.getElementById('message').textContent;
+            navigator.clipboard.writeText(message).then(() => {
+                alert("Message copied to clipboard!");
+            });
+        }
+    </script>
+</body>
+</html>

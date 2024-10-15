@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Settlement Calculator</title>
+    <script>
+        function calculateSettlement() {
+            const principalAmount = parseFloat(document.getElementById('principalAmount').value) || 0;
+            const settlementAmount = principalAmount * 0.65; 
+            document.getElementById('settlementAmount').value = settlementAmount.toFixed(2);
+            document.getElementById('paymentDetails').innerHTML = '';
+        }
+
+        function showPaymentFields() {
+            const paymentOption = document.querySelector('input[name="paymentOption"]:checked').value;
+            const paymentFields = document.getElementById('paymentFields');
+
+            if (paymentOption === 'part') {
+                paymentFields.style.display = 'block';
+            } else {
+                paymentFields.style.display = 'none';
+            }
+        }
+
+        function generateMessage() {
+            const customerName = document.getElementById('customerName').value;
+            const loanAccountNo = document.getElementById('loanAccountNo').value;
+            const totalOverdueAmount = document.getElementById('totalOverdueAmount').value;
+            const settlementAmount = document.getElementById('settlementAmount').value;
+            const agentName = document.getElementById('agentName').value;
+            const agentMobile = document.getElementById('agentMobile').value;
+            const paymentOption = document.querySelector('input[name="paymentOption"]:checked').value;
+
+            let message = `Subject: Settlement Offer for Your Loan\n` +
+                          `Loan Account No: ${loanAccountNo}\n` +
+                          `Dear ${customerName},\n` +
+                          `I hope this message finds you well. We are reaching out regarding your loan with a total amount of ₹${totalOverdueAmount}.\n` +
+                          `We are pleased to offer you a settlement amount of ₹${settlementAmount}.\n`;
+
+            if (paymentOption === 'part') {
+                const paymentDates = document.getElementById('paymentDates').value.split(',');
+                const installmentAmount = (settlementAmount / 3).toFixed(2);
+
+                message += `You have chosen the Part Payment option. The settlement amount will be divided into three installments:\n`;
+                paymentDates.forEach((date, index) => {
+                    message += `Installment ${index + 1}: ₹${installmentAmount} due on ${date.trim()}\n`;
+                });
+            }
+
+            message += `If you wish to proceed with this settlement, please let us know at your earliest convenience. We are here to assist you with the next steps.\n` +
+                       `Best regards,\n` +
+                       `${agentName}\n` +
+                       `${agentMobile}`;
+
+            // Redirect to a new page with the message
+            const encodedMessage = encodeURIComponent(message);
+            window.location.href = `display_message.html?message=${encodedMessage}`;
+        }
+    </script>
+</head>
+<body>
+    <h1>Loan Settlement Calculator</h1>
+    <form>
+        <label for="customerName">Customer Name:</label><br>
+        <input type="text" id="customerName" required><br><br>
+
+        <label for="loanAccountNo">Loan Account Number:</label><br>
+        <input type="text" id="loanAccountNo" required><br><br>
+
+        <label for="totalOverdueAmount">Total Overdue Amount:</label><br>
+        <input type="number" id="totalOverdueAmount" required><br><br>
+
+        <label for="principalAmount">Principal Amount:</label><br>
+        <input type="number" id="principalAmount" required><br><br>
+        
+        <button type="button" onclick="calculateSettlement()">Calculate Settlement Amount</button><br><br>
+
+        <label for="settlementAmount">Settlement Amount:</label><br>
+        <input type="text" id="settlementAmount" readonly><br><br>
+
+        <label>Payment Option:</label><br>
+        <input type="radio" name="paymentOption" value="single" onclick="showPaymentFields()" checked> Single Shot<br>
+        <input type="radio" name="paymentOption" value="part" onclick="showPaymentFields()"> Part Payment<br><br>
+
+        <div id="paymentFields" style="display: none;">
+            <label for="paymentDates">Enter three due dates (comma-separated):</label><br>
+            <input type="text" id="paymentDates" placeholder="e.g., 2024-01-01, 2024-02-01, 2024-03-01" required><br><br>
+        </div>
+
+        <label for="agentName">Agent Name:</label><br>
+        <input type="text" id="agentName" required><br><br>
+
+        <label for="agentMobile">Agent Mobile No:</label><br>
+        <input type="text" id="agentMobile" required><br><br>
+
+        <button type="button" onclick="generateMessage()">Submit</button>
+    </form>
+</body>
+</html>
